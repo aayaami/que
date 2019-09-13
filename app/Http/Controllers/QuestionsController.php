@@ -25,7 +25,7 @@ class QuestionsController extends Controller
      */
     public function create()
     {
-        //
+        return view('questions.create');
     }
 
     /**
@@ -36,7 +36,17 @@ class QuestionsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+        // Create Question
+        $question = new Question;
+        $question->title = $request->input('title');
+        $question->body = $request->input('body');
+        $question->save();
+
+        return redirect('/questions')->with('success', 'Question Created');
     }
 
     /**
@@ -59,7 +69,8 @@ class QuestionsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $question = Question::find($id);
+        return view('questions.edit')->with('question', $question);
     }
 
     /**
@@ -71,7 +82,17 @@ class QuestionsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'title' => 'required',
+            'body' => 'required'
+        ]);
+        // Create Question
+        $question = Question::find($id);
+        $question->title = $request->input('title');
+        $question->body = $request->input('body');
+        $question->save();
+
+        return redirect('/questions')->with('success', 'Question Updated');
     }
 
     /**
@@ -82,6 +103,9 @@ class QuestionsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $question = Question::find($id);
+        $question->delete();
+
+        return redirect('/questions')->with('success', 'Post Removed');
     }
 }
