@@ -44,6 +44,7 @@ class QuestionsController extends Controller
         $question = new Question;
         $question->title = $request->input('title');
         $question->body = $request->input('body');
+        $question->user_id = auth()->user()->id;
         $question->save();
 
         return redirect('/questions')->with('success', 'Question Created');

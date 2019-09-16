@@ -13,3 +13,6 @@
 
 Route::get('/', 'PagesController@index');
 Route::resource('questions', 'QuestionsController');
+Auth::routes();
+
+Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
