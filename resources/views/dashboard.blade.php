@@ -26,8 +26,8 @@
                             </tr>
                             @foreach($questions as $question)
                                 <tr>
-                                    <th>{{$question->title}}</th>
-                                    <th><a href="/posts/{{$question->id}}/edit" class="btn btn-primary">Edit</a></th>
+                                    <th><a href="/questions/{{$question->id}}">{{$question->title}}</a></th>
+                                    <th><a href="/questions/{{$question->id}}/edit" class="btn btn-primary">Edit</a></th>
                                     <th>
                                     {!!Form::open(['action' => ['QuestionsController@destroy', $question->id], 'method' => 'POST', 'class' => 'pull-right'])!!}
                                         {{Form::hidden('_method', 'DELETE')}}

@@ -16,6 +16,9 @@
                         <li class="nav-item">
                           <a class="nav-link" href="/">Home</a>
                         </li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/questions">Questions</a>
+                        </li>
                       @else
                         <li class="nav-item">
                           <a class="nav-link" href="/questions">Questions</a>

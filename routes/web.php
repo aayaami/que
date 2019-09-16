@@ -13,6 +13,7 @@
 
 Route::get('/', 'PagesController@index');
 Route::resource('questions', 'QuestionsController');
+Route::resource('comments', 'CommentsController');
 Auth::routes();
 
 Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
