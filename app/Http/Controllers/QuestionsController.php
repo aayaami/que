@@ -7,6 +7,17 @@ use App\Question;
 
 class QuestionsController extends Controller
 {
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth', ['except' => ['index', 'show']]);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -71,6 +82,11 @@ class QuestionsController extends Controller
     public function edit($id)
     {
         $question = Question::find($id);
+
+        // Check for correct user
+        if(auth()->user()->id !== $question->user_id){
+            return view('/questions')->with('error', 'Unauthorized Page');
+        }
         return view('questions.edit')->with('question', $question);
     }
 
@@ -105,6 +121,11 @@ class QuestionsController extends Controller
     public function destroy($id)
     {
         $question = Question::find($id);
+
+        // Check for correct user
+        if(auth()->user()->id !== $question->user_id){
+            return view('/questions')->with('error', 'Unauthorized Page');
+        }
         $question->delete();
 
         return redirect('/questions')->with('success', 'Post Removed');

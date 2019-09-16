@@ -8,10 +8,14 @@
     <small>Written on {{$question->created_at}} by {{$question->user->name}}</small>
   </div>
   <hr>
-  <a href="/questions/{{$question->id}}/edit" class="btn btn-primary">Edit</a>
+  @if(!Auth::guest())
+    @if(Auth::user()->id == $question->user_id)
+      <a href="/questions/{{$question->id}}/edit" class="btn btn-primary">Edit</a>
 
-  {!!Form::open(['action' => ['QuestionsController@destroy', $question->id], 'method' => 'POST', 'class' => 'pull-right'])!!}
-    {{Form::hidden('_method', 'DELETE')}}
-    {{Form::submit('Delete', ['class' => 'btn btn-danger mt-2'])}}
-  {!!Form::close()!!}
+      {!!Form::open(['action' => ['QuestionsController@destroy', $question->id], 'method' => 'POST', 'class' => 'pull-right'])!!}
+        {{Form::hidden('_method', 'DELETE')}}
+        {{Form::submit('Delete', ['class' => 'btn btn-danger mt-2'])}}
+      {!!Form::close()!!}
+    @endif
+  @endif
 @endsection
