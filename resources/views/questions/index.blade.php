@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+  {!! Form::open(['action' => 'QuestionsController@indexSearch', 'method' => 'POST']) !!}
+    <div class="form-group">
+      {{Form::label('search', 'Search questions by title')}}
+      {{Form::text('search', $searchTerm, ['class' => 'form-control', 'placeholder' => 'Question title'])}}
+    </div>
+    {{Form::submit('Submit', ['class' => 'btn btn-primary'])}}
+  {!! Form::close() !!}
   <h3 class="m-3 text-center">Questions</h3>
   @if(count($questions) > 0)
     @foreach($questions as $question)

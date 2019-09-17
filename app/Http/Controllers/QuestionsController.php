@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Question;
+use App\Comment;
 
 class QuestionsController extends Controller
 {
@@ -25,8 +26,26 @@ class QuestionsController extends Controller
      */
     public function index()
     {
+        $searchTerm = '';
         $questions = Question::orderBy('created_at', 'desc')->get();
-        return view('questions.index')->with('questions', $questions);
+        return view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm);
+    }
+
+    /**
+     * Display a listing of the resource by search.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexSearch(Request $request)
+    {
+        $searchTerm = trim($request->input('search'));
+
+        if($searchTerm == ''){
+            $questions = Question::orderBy('created_at', 'desc')->get();
+        } else {
+            $questions = Question::where('title', 'LIKE', "%{$searchTerm}%")->get();
+        }
+        return view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm);
     }
 
     /**
@@ -70,7 +89,10 @@ class QuestionsController extends Controller
     public function show($id)
     {
         $question = Question::find($id);
-        return view('questions.show')->with('question', $question);
+
+        $question->load('comments.user')->get();
+        return view('questions.show', compact('question'));
+        // return view('questions.show')->with('question', $question);
     }
 
     /**
@@ -126,8 +148,9 @@ class QuestionsController extends Controller
         if(auth()->user()->id !== $question->user_id){
             return view('/questions')->with('error', 'Unauthorized Page');
         }
+        $question->comments()->delete();
         $question->delete();
 
-        return redirect('/questions')->with('success', 'Post Removed');
+        return redirect('/questions')->with('success', 'Comment Removed');
     }
 }

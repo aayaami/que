@@ -4,10 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Question extends Model
+class Comment extends Model
 {
     // Table Name
-    protected $table = 'questions';
+    protected $table = 'comments';
     // Primary Key
     public $primaryKey =  'id';
     // Timestamps
@@ -17,7 +17,7 @@ class Question extends Model
         return $this->belongsTo('App\User');
     }
 
-    public function comments(){
-        return $this->hasMany('App\Comment');
+    public function question(){
+        return $this->belongsTo('App\Question');
     }
 }
