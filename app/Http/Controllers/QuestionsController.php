@@ -30,6 +30,23 @@ class QuestionsController extends Controller
     }
 
     /**
+     * Display a listing of the resource by search.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function indexSearch(Request $request)
+    {
+        $searchTerm = trim($request->input('search'));
+
+        if($searchTerm == ''){
+            $questions = Question::orderBy('created_at', 'desc')->get();
+        } else {
+            $questions = Question::where('title', 'LIKE', "%{$searchTerm}%")->get();
+        }
+        return view('questions.index')->with('questions', $questions);
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response

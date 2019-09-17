@@ -32,8 +32,13 @@
     @if(count($question->comments) > 0)
       @foreach($question->comments as $comment)
         <div class="jumbotron card bg-light m-2 p-4">
-          <p>{{$question->body}}</p>
+          <p>{{$comment->body}}</p>
           <small>Written on {{$comment->created_at}} by {{$comment->user->name}}</small>
+          <a href="/comments/{{$comment->id}}/edit" class="btn btn-primary btn-block">Edit</a>
+          {!!Form::open(['action' => ['CommentsController@destroy', $comment->id], 'method' => 'POST', 'class' => 'pull-right'])!!}
+            {{Form::hidden('_method', 'DELETE')}}
+            {{Form::submit('Delete', ['class' => 'btn btn-danger mt-2'])}}
+          {!!Form::close()!!}
         </div>
       @endforeach
     @else

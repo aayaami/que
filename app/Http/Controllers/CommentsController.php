@@ -67,7 +67,13 @@ class CommentsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $comment = Comment::find($id);
+
+        // Check for correct user
+        if(auth()->user()->id !== $comment->user_id){
+            return view('/comments')->with('error', 'Unauthorized Page');
+        }
+        return view('comments.edit')->with('comment', $comment);
     }
 
     /**
@@ -79,7 +85,15 @@ class CommentsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'body' => 'required'
+        ]);
+        // Update comment
+        $comment = Comment::find($id);
+        $comment->body = $request->input('body');
+        $comment->save();
+
+        return redirect("/questions/$comment->question_id")->with('success', 'Comment Updated');
     }
 
     /**
@@ -90,6 +104,14 @@ class CommentsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $comment = Comment::find($id);
+
+        // Check for correct user
+        if(auth()->user()->id !== $comment->user_id){
+            return view('/questions')->with('error', 'Unauthorized Page');
+        }
+        $comment->delete();
+
+        return redirect('/questions')->with('success', 'Post Removed');
     }
 }

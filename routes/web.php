@@ -12,6 +12,7 @@
 */
 
 Route::get('/', 'PagesController@index');
+Route::post('/questions/search', 'QuestionsController@indexSearch');
 Route::resource('questions', 'QuestionsController');
 Route::resource('comments', 'CommentsController');
 Auth::routes();
