@@ -34,12 +34,16 @@
         <div class="jumbotron card bg-light m-2 p-4">
           <p>{{$comment->body}}</p>
           <small>Written on {{$comment->created_at}} by {{$comment->user->name}}</small>
-          <a href="/comments/{{$comment->id}}/edit" class="btn btn-primary btn-block">Edit</a>
-          {!!Form::open(['action' => ['CommentsController@destroy', $comment->id], 'method' => 'POST', 'class' => 'pull-right'])!!}
-            {{Form::hidden('_method', 'DELETE')}}
-            {{Form::hidden('question_id', $comment->question_id)}}
-            {{Form::submit('Delete', ['class' => 'btn btn-danger mt-2'])}}
-          {!!Form::close()!!}
+          @if(!Auth::guest())
+            @if(Auth::user()->id == $comment->user_id)
+              <a href="/comments/{{$comment->id}}/edit" class="btn btn-primary" style="width: 60px">Edit</a>
+              {!!Form::open(['action' => ['CommentsController@destroy', $comment->id], 'method' => 'POST', 'class' => 'pull-right'])!!}
+                {{Form::hidden('_method', 'DELETE')}}
+                {{Form::hidden('question_id', $comment->question_id)}}
+                {{Form::submit('Delete', ['class' => 'btn btn-danger mt-2'])}}
+              {!!Form::close()!!}
+            @endif
+          @endif
         </div>
       @endforeach
     @else
