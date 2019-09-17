@@ -4,7 +4,7 @@
   {!! Form::open(['action' => 'QuestionsController@indexSearch', 'method' => 'POST']) !!}
     <div class="form-group">
       {{Form::label('search', 'Search questions by title')}}
-      {{Form::text('search', '', ['class' => 'form-control', 'placeholder' => 'Question title'])}}
+      {{Form::text('search', $searchTerm, ['class' => 'form-control', 'placeholder' => 'Question title'])}}
     </div>
     {{Form::submit('Submit', ['class' => 'btn btn-primary'])}}
   {!! Form::close() !!}

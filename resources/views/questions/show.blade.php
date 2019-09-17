@@ -37,6 +37,7 @@
           <a href="/comments/{{$comment->id}}/edit" class="btn btn-primary btn-block">Edit</a>
           {!!Form::open(['action' => ['CommentsController@destroy', $comment->id], 'method' => 'POST', 'class' => 'pull-right'])!!}
             {{Form::hidden('_method', 'DELETE')}}
+            {{Form::hidden('question_id', $comment->question_id)}}
             {{Form::submit('Delete', ['class' => 'btn btn-danger mt-2'])}}
           {!!Form::close()!!}
         </div>

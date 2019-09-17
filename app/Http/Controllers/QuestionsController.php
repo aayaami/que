@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Question;
+use App\Comment;
 
 class QuestionsController extends Controller
 {
@@ -25,8 +26,9 @@ class QuestionsController extends Controller
      */
     public function index()
     {
+        $searchTerm = '';
         $questions = Question::orderBy('created_at', 'desc')->get();
-        return view('questions.index')->with('questions', $questions);
+        return view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm);
     }
 
     /**
@@ -43,7 +45,7 @@ class QuestionsController extends Controller
         } else {
             $questions = Question::where('title', 'LIKE', "%{$searchTerm}%")->get();
         }
-        return view('questions.index')->with('questions', $questions);
+        return view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm);
     }
 
     /**
@@ -146,8 +148,9 @@ class QuestionsController extends Controller
         if(auth()->user()->id !== $question->user_id){
             return view('/questions')->with('error', 'Unauthorized Page');
         }
+        $question->comments()->delete();
         $question->delete();
 
-        return redirect('/questions')->with('success', 'Post Removed');
+        return redirect('/questions')->with('success', 'Comment Removed');
     }
 }

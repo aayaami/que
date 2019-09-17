@@ -102,8 +102,9 @@ class CommentsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
+        $question_id = $request->input('question_id');
         $comment = Comment::find($id);
 
         // Check for correct user
@@ -111,7 +112,6 @@ class CommentsController extends Controller
             return view('/questions')->with('error', 'Unauthorized Page');
         }
         $comment->delete();
-
-        return redirect('/questions')->with('success', 'Post Removed');
+        return redirect("/questions/$question_id")->with('success', 'Comment Removed');
     }
 }
