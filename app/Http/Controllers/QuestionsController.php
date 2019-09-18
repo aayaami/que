@@ -45,7 +45,7 @@ class QuestionsController extends Controller
         if($searchTerm == ''){
             $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
         } else {
-            $questions = Question::where('title', 'LIKE', "%{$searchTerm}%")->with('likes')->get();
+            $questions = Question::where('title', 'LIKE', "%{$searchTerm}%")->orderBy('rating', 'desc')->with('likes')->get();
         }
         return view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm);
     }
@@ -77,6 +77,7 @@ class QuestionsController extends Controller
         $question->title = $request->input('title');
         $question->body = $request->input('body');
         $question->user_id = auth()->user()->id;
+        $question->rating = 0;
         $question->save();
 
         return redirect('/questions')->with('success', 'Question Created');
