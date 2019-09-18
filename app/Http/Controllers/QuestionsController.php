@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Question;
 use App\Comment;
+use App\Like;
 
 class QuestionsController extends Controller
 {
@@ -70,8 +71,28 @@ class QuestionsController extends Controller
     {
         $this->validate($request, [
             'title' => 'required',
-            'body' => 'required'
+            'body' => 'required',
+            'file' => 'file|mimes:png,jpg,webp,gif|max:20000'
         ]);
+        $files = $request->images;
+        
+        // foreach($files as $file){
+        //     $extension = $file->getClientOriginalExtension();
+        //     $fileName = time().'.'.$extension;
+        //     $path = 'images';
+        //     $file->move($path, $fileName);
+        // }
+        $extension = $files[1]->getClientOriginalExtension();
+        $fileName = time().'.'.$extension;
+        $path = 'images';
+        $files[1]->move($path, $fileName);
+
+        $extension = $files[0]->getClientOriginalExtension();
+        $fileName = time().'.'.$extension;
+        $path = 'images';
+        $files[0]->move($path, $fileName);
+
+        dd($files);
         // Create Question
         $question = new Question;
         $question->title = $request->input('title');
@@ -152,6 +173,7 @@ class QuestionsController extends Controller
             return view('/questions')->with('error', 'Unauthorized Page');
         }
         $question->comments()->delete();
+        $question->likes()->delete();
         $question->delete();
 
         return redirect('/questions')->with('success', 'Comment Removed');

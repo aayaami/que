@@ -15,6 +15,7 @@ Route::get('/', 'PagesController@index');
 Route::post('/questions/search', 'QuestionsController@indexSearch');
 Route::resource('questions', 'QuestionsController');
 Route::resource('comments', 'CommentsController');
+Route::resource('images', 'ImagesController');
 Auth::routes();
 
 Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
