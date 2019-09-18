@@ -35,11 +35,12 @@
       e.preventDefault();
 
       question_id = e.target.dataset['questionid']
+      type = e.target.dataset['type']
 
       $.ajax({
           type:'POST',
           url:"{{ route('ajaxRequest.post') }}",
-          data:{question_id: question_id},
+          data:{question_id: question_id, type: type},
           success:function(data){
             alert(data.success)
           }

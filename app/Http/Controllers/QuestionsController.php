@@ -27,7 +27,9 @@ class QuestionsController extends Controller
     public function index()
     {
         $searchTerm = '';
-        $questions = Question::orderBy('created_at', 'desc')->get();
+        // $questions = Question::orderBy('created_at', 'desc')->get();
+        $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
+        // $questions = likes();
         return view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm);
     }
 
@@ -41,9 +43,9 @@ class QuestionsController extends Controller
         $searchTerm = trim($request->input('search'));
 
         if($searchTerm == ''){
-            $questions = Question::orderBy('created_at', 'desc')->get();
+            $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
         } else {
-            $questions = Question::where('title', 'LIKE', "%{$searchTerm}%")->get();
+            $questions = Question::where('title', 'LIKE', "%{$searchTerm}%")->with('likes')->get();
         }
         return view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm);
     }
