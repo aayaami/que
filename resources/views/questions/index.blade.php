@@ -13,6 +13,8 @@
     @foreach($questions as $question)
       <div class="jumbotron card bg-light m-2 p-4">
         <h3 class="card-title text-center"><a href="/questions/{{$question->id}}">{{$question->title}}</a></h3>
+        <button class="btn btn-success like" id="like" style="width: 60px;" data-questionid="{{$question->id}}">Like</button>
+        <button class="btn btn-danger like" style="width: 100px;" data-questionid="{{$question->id}}">Unlike</button>
         <small>Written on {{$question->created_at}} by {{$question->user->name}}</small>
       </div>
     @endforeach
@@ -20,3 +22,5 @@
     <p class="text-center">No questions found</p>
   @endif
 @endsection
+
+

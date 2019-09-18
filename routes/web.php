@@ -18,3 +18,6 @@ Route::resource('comments', 'CommentsController');
 Auth::routes();
 
 Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
+
+Route::get('ajaxRequest', 'AjaxController@ajaxRequest');
+Route::post('ajaxRequest', 'AjaxController@ajaxRequestPost')->name('ajaxRequest.post');
