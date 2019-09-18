@@ -28,6 +28,7 @@ class AjaxController extends Controller
     {
         $like = Like::where('user_id', auth()->user()->id)->where('question_id', $request->input('question_id'))->first();
         $question = Question::where('id', $request->input('question_id'))->first();
+        $searchTerm = $request->input('search');
 
         if($like) {
             if($like->like == true){
@@ -38,7 +39,10 @@ class AjaxController extends Controller
             Like::destroy($like->id);
             
             $question->save();
-            return redirect('/questions')->with('success', 'Question Liked');
+            $searchTerm = trim($request->input('search'));
+            $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
+            $returnHTML = view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm)->render();
+            return response()->json(array('success' => true, 'html'=>$returnHTML));
         }
 
         $like = new Like;
@@ -55,6 +59,12 @@ class AjaxController extends Controller
 
         $question->save();
 
-        return response()->json(['success' => $like]);
+        $searchTerm = trim($request->input('search'));
+
+        $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
+
+        $returnHTML = view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm)->render();
+
+        return response()->json(array('success' => true, 'html'=>$returnHTML));
     }
 }
