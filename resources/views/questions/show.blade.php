@@ -5,6 +5,11 @@
   <div class="jumbotron card bg-light m-2 p-4">
     <h3 class="card-title text-center">{{$question->title}}</h3>
     <p>{{$question->body}}</p>
+    @foreach($question->images as $image)
+      <div class="m-3 d-inline">
+        <a href="/images/{{$image->title}}"><img class="" src="/images/{{$image->title}}" style="width: 15%; height: 15%;" alt=""></a>
+      </div>
+    @endforeach
     <small>Written on {{$question->created_at}} by {{$question->user->name}}</small>
   </div>
   <hr>
