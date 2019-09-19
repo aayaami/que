@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Question;
 use App\Comment;
+use App\Like;
+use App\Image;
 
 class QuestionsController extends Controller
 {
@@ -27,7 +29,9 @@ class QuestionsController extends Controller
     public function index()
     {
         $searchTerm = '';
-        $questions = Question::orderBy('created_at', 'desc')->get();
+        // $questions = Question::orderBy('created_at', 'desc')->get();
+        $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
+        // $questions = likes();
         return view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm);
     }
 
@@ -41,9 +45,9 @@ class QuestionsController extends Controller
         $searchTerm = trim($request->input('search'));
 
         if($searchTerm == ''){
-            $questions = Question::orderBy('created_at', 'desc')->get();
+            $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
         } else {
-            $questions = Question::where('title', 'LIKE', "%{$searchTerm}%")->get();
+            $questions = Question::where('title', 'LIKE', "%{$searchTerm}%")->orderBy('rating', 'desc')->with('likes')->get();
         }
         return view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm);
     }
@@ -68,14 +72,45 @@ class QuestionsController extends Controller
     {
         $this->validate($request, [
             'title' => 'required',
-            'body' => 'required'
+            'body' => 'required',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg'
         ]);
+
         // Create Question
         $question = new Question;
         $question->title = $request->input('title');
         $question->body = $request->input('body');
         $question->user_id = auth()->user()->id;
+        $question->rating = 0;
         $question->save();
+
+        $question = Question::latest()->first();
+        
+        // Handle File Upload
+        if($request->hasfile('images'))
+        {
+            foreach($request->file('images') as $file)
+            {
+                // Get Filename with the extenstion
+                $filenameWithExt = $file->getClientOriginalName();
+                // Get just filename
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                // Get just ext
+                $extension = $file->getClientOriginalExtension();
+                // Filename to store
+                $fileNameToStore = $filename.'_'.time().'.'.$extension;
+                // Upload Image
+                $file->move(public_path()."/images"."/", $fileNameToStore);  
+
+                $image = new Image;
+                $image->user_id = auth()->user()->id;
+                $image->title = $fileNameToStore;
+                $image->question_id = $question->id;
+                $image->save();
+            }
+        }
+
+        
 
         return redirect('/questions')->with('success', 'Question Created');
     }
@@ -90,7 +125,7 @@ class QuestionsController extends Controller
     {
         $question = Question::find($id);
 
-        $question->load('comments.user')->get();
+        $question->load('comments.user')->load('images')->get();
         return view('questions.show', compact('question'));
         // return view('questions.show')->with('question', $question);
     }
@@ -123,13 +158,46 @@ class QuestionsController extends Controller
     {
         $this->validate($request, [
             'title' => 'required',
-            'body' => 'required'
+            'body' => 'required',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg'
         ]);
+
         // Create Question
         $question = Question::find($id);
         $question->title = $request->input('title');
         $question->body = $request->input('body');
         $question->save();
+
+        // Handle File Upload
+        if($request->hasfile('images'))
+        {
+            $images = Image::where('question_id', $question->id)->get();
+            if(count($images) > 0){
+                foreach($images as $image){
+                    \File::delete('images/'.$image->title);
+                    $image->delete();
+                }
+            }
+            foreach($request->file('images') as $file)
+            {
+                // Get Filename with the extenstion
+                $filenameWithExt = $file->getClientOriginalName();
+                // Get just filename
+                $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+                // Get just ext
+                $extension = $file->getClientOriginalExtension();
+                // Filename to store
+                $fileNameToStore = $filename.'_'.time().'.'.$extension;
+                // Upload Image
+                $file->move(public_path()."/images"."/", $fileNameToStore);  
+
+                $image = new Image;
+                $image->user_id = auth()->user()->id;
+                $image->title = $fileNameToStore;
+                $image->question_id = $question->id;
+                $image->save();
+            }
+        }
 
         return redirect('/questions')->with('success', 'Question Updated');
     }
@@ -149,6 +217,7 @@ class QuestionsController extends Controller
             return view('/questions')->with('error', 'Unauthorized Page');
         }
         $question->comments()->delete();
+        $question->likes()->delete();
         $question->delete();
 
         return redirect('/questions')->with('success', 'Comment Removed');
