@@ -60,9 +60,12 @@ class AjaxController extends Controller
         $question->save();
 
         $searchTerm = trim($request->input('search'));
-
-        $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
-
+        if($searchTerm != '' && $searchTerm){
+            $questions = Question::where('title', 'LIKE', "%{$searchTerm}%")->orderBy('rating', 'desc')->with('likes')->get();
+        } else {
+            $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
+        }
+        
         $returnHTML = view('partials.questions')->with('questions', $questions)->render();
 
         return response()->json(array('success' => true, 'html'=> $returnHTML));

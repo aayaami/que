@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-  {!! Form::open(['action' => 'QuestionsController@indexSearch', 'method' => 'POST']) !!}
+  {!! Form::open(['action' => 'QuestionsController@index', 'method' => 'GET']) !!}
     <div class="form-group">
       {{Form::label('search', 'Search questions by title')}}
       {{Form::text('search', $searchTerm, ['class' => 'form-control', 'placeholder' => 'Question title', 'id' => 'search'])}}
@@ -9,5 +9,3 @@
   {!! Form::close() !!}
   @include('partials.questions')
 @endsection
-
-

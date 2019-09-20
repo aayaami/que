@@ -26,29 +26,16 @@ class QuestionsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $searchTerm = '';
-        // $questions = Question::orderBy('created_at', 'desc')->get();
-        $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
-        // $questions = likes();
-        return view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm);
-    }
-
-    /**
-     * Display a listing of the resource by search.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function indexSearch(Request $request)
-    {
-        $searchTerm = trim($request->input('search'));
-
-        if($searchTerm == ''){
-            $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
-        } else {
+        if($request->has('search')){
+            $searchTerm = $request->input('search');
             $questions = Question::where('title', 'LIKE', "%{$searchTerm}%")->orderBy('rating', 'desc')->with('likes')->get();
+        } else {
+            $searchTerm = '';
+            $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
         }
+
         return view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm);
     }
 
