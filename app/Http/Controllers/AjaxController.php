@@ -41,7 +41,7 @@ class AjaxController extends Controller
             $question->save();
             $searchTerm = trim($request->input('search'));
             $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
-            $returnHTML = view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm)->render();
+            $returnHTML = view('partials.questions')->with('questions', $questions)->render();
             return response()->json(array('success' => true, 'html'=>$returnHTML));
         }
 
@@ -63,8 +63,8 @@ class AjaxController extends Controller
 
         $questions = Question::with('likes')->orderBy('rating', 'desc')->get();
 
-        $returnHTML = view('questions.index')->with('questions', $questions)->with('searchTerm', $searchTerm)->render();
+        $returnHTML = view('partials.questions')->with('questions', $questions)->render();
 
-        return response()->json(array('success' => true, 'html'=>$returnHTML));
+        return response()->json(array('success' => true, 'html'=> $returnHTML));
     }
 }

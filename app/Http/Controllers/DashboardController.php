@@ -24,8 +24,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $user_id = auth()->user()->id;
-        $user = User::find($user_id);
+        $user = auth()->user();
         return view('dashboard')->with('questions', $user->questions);
     }
 }

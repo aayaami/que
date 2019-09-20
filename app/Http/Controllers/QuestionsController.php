@@ -83,8 +83,6 @@ class QuestionsController extends Controller
         $question->user_id = auth()->user()->id;
         $question->rating = 0;
         $question->save();
-
-        $question = Question::latest()->first();
         
         // Handle File Upload
         if($request->hasfile('images'))
